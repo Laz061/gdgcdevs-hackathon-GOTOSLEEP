@@ -1,6 +1,6 @@
 {
-  "name": "Hello Extensions",
-  "description": "Base Level Extension",
+  "name": "Go to Sleep",
+  "description": "A simple extension that asks for nothing else, but for you to go..to..sleep.",
   "version": "1.0",
   "manifest_version": 3,
   "action": {
