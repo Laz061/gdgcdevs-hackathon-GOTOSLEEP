@@ -190,10 +190,21 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
 });
 
 function notifyPet() {
+  // Log to the console that the function was called
   console.log('notifyPet called');
+  
+  // Query for the currently active tab in the current window
+
+  //active: true, currentWindow: true
   chrome.tabs.query({active: true, currentWindow: true}, (tabs) => {
+
+    // For each tab returned (should be one, but could be more in rare cases)
     tabs.forEach(tab => {
+      
+      // Log to the console that a message is being sent to this tab
       console.log('Sending petReact to tab', tab.id);
+      
+      // Send a message of type 'petReact' to the content script in this tab
       chrome.tabs.sendMessage(tab.id, { type: 'petReact' });
     });
   });
