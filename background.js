@@ -31,16 +31,25 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
           chrome.storage.local.set({ corruptActive: true });
           applyCorruptToAllTabs();
         }
+        // 10-min alarm
+        const tenMinBefore = target - 10 * 60 * 1000;
+        if (tenMinBefore > now) {
+          chrome.alarms.create('10minAlarm', { when: tenMinBefore });
+        } else if (delay > 0 && delay <= 10 * 60 * 1000) {
+          chrome.storage.local.set({ zoomActive: true });
+          applyZoomToAllTabs();
+        }
         sendResponse({ success: true });
       });
     });
     return true;
   }
   if (msg.type === 'reset') {
-    chrome.storage.local.set({ greyscaleActive: false, corruptActive: false }, () => {
+    chrome.storage.local.set({ greyscaleActive: false, corruptActive: false, zoomActive: false }, () => {
       chrome.alarms.clearAll(() => {
         removeGreyscaleFromAllTabs();
         removeCorruptFromAllTabs();
+        removeZoomFromAllTabs();
         sendResponse({ success: true });
       });
     });
@@ -112,25 +121,69 @@ function removeCorruptFromAllTabs() {
   // });
 }
 
+function applyZoomToAllTabs() {
+  chrome.storage.local.set({ zoomActive: true }, () => {
+    chrome.tabs.query({}, (tabs) => {
+      tabs.forEach(tab => {
+        if (tab.url?.startsWith('http')) {
+          chrome.scripting.executeScript({
+            target: { tabId: tab.id },
+            files: ['annoy/10min/zoom.js']
+          }).catch(err => {
+            console.log(`Skipping tab ${tab.id}: ${err.message}`);
+          });
+        }
+      });
+    });
+  });
+}
+
+function removeZoomFromAllTabs() {
+  chrome.storage.local.set({ zoomActive: false }, () => {
+    chrome.tabs.query({}, (tabs) => {
+      tabs.forEach(tab => {
+        if (tab.url?.startsWith('http')) {
+          chrome.scripting.executeScript({
+            target: { tabId: tab.id },
+            files: ['annoy/10min/unzoom.js']
+          }).catch(err => {
+            console.log(`Skipping tab ${tab.id}: ${err.message}`);
+          });
+        }
+      });
+    });
+  });
+}
+
 chrome.alarms.onAlarm.addListener((alarm) => {
   if (alarm.name === '30minAlarm') {
     notifyPet();
     applyGreyscaleToAllTabs();
   }
   if (alarm.name === '20minAlarm') {
+    notifyPet();
     applyCorruptToAllTabs();
+  }
+  if (alarm.name === '10minAlarm') {
+    notifyPet();
+    applyZoomToAllTabs();
   }
 });
 
 chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
   if (changeInfo.status === 'complete' && tab.url?.startsWith('http')) {
-    chrome.storage.local.get(['greyscaleActive', 'corruptActive'], ({ greyscaleActive, corruptActive }) => {
+    chrome.storage.local.get(['greyscaleActive', 'corruptActive', 'zoomActive'], ({ greyscaleActive, corruptActive, zoomActive }) => {
       if (greyscaleActive) {
-        notifyPet();
+
         applyGreyscaleToAllTabs();
       }
       if (corruptActive) {
+
         applyCorruptToAllTabs();
+      }
+      if (zoomActive) {
+
+        applyZoomToAllTabs();
       }
     });
   }
