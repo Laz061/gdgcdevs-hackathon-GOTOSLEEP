@@ -7,7 +7,6 @@ const secondsEl  = document.getElementById('seconds');
 const progressBar= document.querySelector('.progress-bar');
 const progressEl = document.getElementById('progress');
 const messageEl  = document.getElementById('message');
-const loadingEl  = document.getElementById('loading');
 const resetBtn   = document.getElementById('resetBtn');
 const labelEl    = document.querySelector('label[for="sleepTime"]');
 
@@ -31,10 +30,7 @@ function showInputUI() {
 // Use sleepStart from storage for progress calculation
 
 document.addEventListener('DOMContentLoaded', () => {
-  loadingEl.classList.remove('hidden');
-
   chrome.storage.local.get(['sleepTarget', 'sleepStart'], ({ sleepTarget, sleepStart }) => {
-    loadingEl.classList.add('hidden');
     if (sleepTarget && sleepStart) {
       startDisplay(sleepTarget, sleepStart);
     } else if (sleepTarget) {
@@ -89,7 +85,6 @@ function startDisplay(targetTs, startTs) {
   countdownEl.classList.remove('hidden');
   progressBar.classList.remove('hidden');
   messageEl.classList.add('hidden');
-  loadingEl.classList.add('hidden');
 
   clearInterval(intervalId);
 
