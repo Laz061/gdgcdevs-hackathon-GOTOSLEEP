@@ -1,52 +1,50 @@
-console.log('Content script starting...'); // Initial debug log
+window.onload = loadPet();
 
-window.onload = function() {
-    console.log('Window loaded, attempting to create pet...'); // Loading debug log
-    
-    if (document.getElementById('pet')) {
-        console.log('Pet already exists, skipping creation');
-        return;
-    }
-    
-    const pet = document.createElement('img');
-    pet.id = 'pet';
-    pet.className = 'pet';
-    pet.src = chrome.runtime.getURL('pet/pet.png');
-    document.body.appendChild(pet);
-    
-    console.log('Pet element created and added to page');
+function loadPet() {
+  console.log("Window loaded, attempting to create pet..."); // Loading debug log
 
-    // Listen for petReact event
-    chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+  if (document.getElementById("pet")) {
+    console.log("Pet already exists, skipping creation");
+    return;
+  }
 
-      if (message.type === 'petReact') {
-        console.log('petReact message received');
-        petReact();
-      }
-      
-    });
+  const pet = document.createElement("img");
+  pet.id = "pet";
+  pet.className = "pet";
+  pet.src = chrome.runtime.getURL("pet/pet.png");
+  document.body.appendChild(pet);
 
-    function petReact() {
-      // Change to tired image
-      pet.src = chrome.runtime.getURL('pet/petr.png');
+  console.log("Pet element created and added to page");
 
-      // After 2 seconds, revert to normal image
-      setTimeout(() => {
-        pet.src = chrome.runtime.getURL('pet/pet.png');
-      }, 2000);
-    }
+  // Move every 3 seconds
+  setInterval(moveRandomly, 6000);
+  // Initial movement
+  moveRandomly();
+}
 
-    // Add random movement
-    function moveRandomly() {
-        const viewportWidth = window.innerWidth - 100; // Subtract pet width
-        const newX = Math.floor(Math.random() * viewportWidth);
+// Listen for petReact event
+chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+  if (message.type === "petReact") {
+    console.log("petReact message received");
+    petReact();
+  }
+});
 
-        pet.style.left = `${newX}px`;
-        // Do not change pet.style.bottom; it stays at 20px as set in CSS
-    }
+function petReact() {
+  // Change to tired image
+  pet.src = chrome.runtime.getURL("pet/petr.png");
 
-    // Move every 3 seconds
-    setInterval(moveRandomly, 6000);
-    // Initial movement
-    moveRandomly();
-};
+  // After 2 seconds, revert to normal image
+  setTimeout(() => {
+    pet.src = chrome.runtime.getURL("pet/pet.png");
+  }, 2000);
+}
+
+// Add random movement
+function moveRandomly() {
+  const viewportWidth = window.innerWidth - 100; // Subtract pet width
+  const newX = Math.floor(Math.random() * viewportWidth);
+
+  pet.style.left = `${newX}px`;
+  // Do not change pet.style.bottom; it stays at 20px as set in CSS
+}
