@@ -29,8 +29,8 @@
   ],
 
   "web_accessible_resources": [{
-    "resources": ["pet/pet.png"],
-    "matches": ["<all_urls>"]
+    "resources": ["pet/pet.png","annoy/30min/timeflash/timeflash.js","annoy/30min/timeflash/gojo.gif"],
+      "matches": ["<all_urls>"]
   }
   ],
 

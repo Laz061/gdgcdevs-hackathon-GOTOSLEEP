@@ -45,6 +45,23 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
   }
 });
 
+chrome.alarms.onAlarm.addListener((alarm) => {
+  if (alarm.name === 'sleepAlarm') {
+    chrome.tabs.query({}, (tabs) => {
+      tabs.forEach(tab => {
+        if (tab.url?.startsWith('http')) {
+          chrome.scripting.executeScript({
+            target: { tabId: tab.id },
+            files: ['annoy/30min/timeflash/timeflash.js']
+          }).catch(err => {
+            console.log(`Skipping tab ${tab.id}: ${err.message}`);
+          });
+        }
+      });
+    });
+  }
+});
+
 // Apply grayscale when alarm triggers
 chrome.alarms.onAlarm.addListener((alarm) => {
   if (alarm.name === 'greyscaleAlarm') {
