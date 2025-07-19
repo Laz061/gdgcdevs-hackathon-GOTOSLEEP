@@ -77,3 +77,4 @@ function moveRandomly() {
   pet.style.left = `${newX}px`;
   // Do not change pet.style.bottom; it stays at 20px as set in CSS
 }
+

@@ -199,7 +199,6 @@ chrome.alarms.onAlarm.addListener((alarm) => {
     }
   });
 
-  
 
 
 chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
