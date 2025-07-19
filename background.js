@@ -76,33 +76,6 @@ function removeGreyscaleFromAllTabs() {
   });
 }
 
-function flashTimeOnAllTabs() {
-  removeGreyscaleFromAllTabs();
-
-  chrome.tabs.query({}, (tabs) => {
-    tabs.forEach(tab => {
-      if (tab.url?.startsWith('http')) {
-        chrome.scripting.executeScript({
-          target: { tabId: tab.id },
-          files: ['annoy/0sec/flashtime/timeflash.js']
-        }).catch(err => {
-          console.log(`Skipping tab ${tab.id}: ${err.message}`);
-        });
-      }
-    });
-  });
-  setTimeout(() => {
-    chrome.storage.local.get('greyscaleActive', ({ greyscaleActive }) => {
-      if (greyscaleActive) {
-        applyGreyscaleToAllTabs();
-      }
-    });
-  }, 11000);
-
-}
-
-
-
 // Apply grayscale when alarm triggers
 chrome.alarms.onAlarm.addListener((alarm) => {
   if (alarm.name === '30minAlarm') {
