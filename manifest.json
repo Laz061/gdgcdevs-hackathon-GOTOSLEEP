@@ -19,12 +19,6 @@
       ],
       "matches": ["<all_urls>"],
       "run_at": "document_idle"
-    },
-
-    {
-      "matches": ["<all_urls>"],
-      "js": ["annoy/30min/greyscale/greyscale.js"],
-      "run_at": "document_start"
     }
   ],
 
