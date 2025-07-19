@@ -22,10 +22,11 @@
     }
   }
 
-  // Blur random images
+  // Blur random images, but skip pet image
   function blurImages() {
     const images = Array.from(document.images);
     images.forEach(img => {
+      if (img.id === 'pet' || img.closest('#pet-container')) return;
       if (Math.random() < 0.3) {
         img.style.filter = 'blur(6px)';
       }

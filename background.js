@@ -66,6 +66,7 @@ function applyGreyscaleToAllTabs() {
         chrome.scripting.insertCSS({
           target: { tabId: tab.id },
           files: ['annoy/30min/greyscale/greyscale.css']
+
         }).catch(err => {
           console.log(`Skipping tab ${tab.id}: ${err.message}`);
         });
