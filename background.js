@@ -21,6 +21,21 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
         const thirtyMinBefore = target - 30 * 60 * 1000;
         if (thirtyMinBefore > now) {
           chrome.alarms.create('greyscaleAlarm', { when: thirtyMinBefore });
+        } else {
+          // If less than 30 minutes remain, trigger greyscale immediately
+          chrome.storage.local.set({ greyscaleActive: true });
+          chrome.tabs.query({}, (tabs) => {
+            tabs.forEach(tab => {
+              if (tab.url?.startsWith('http')) {
+                chrome.scripting.insertCSS({
+                  target: { tabId: tab.id },
+                  files: ['annoy/30min/greyscale/greyscale.css']
+                }).catch(err => {
+                  console.log(`Skipping tab ${tab.id}: ${err.message}`);
+                });
+              }
+            });
+          });
         }
         sendResponse({ success: true });
       });
