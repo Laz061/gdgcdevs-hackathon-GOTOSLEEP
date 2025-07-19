@@ -1,0 +1,2 @@
+html { filter: grayscale(1) !important; }
+body.greyscale-active { filter: grayscale(1) !important; }

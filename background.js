@@ -1,31 +1,50 @@
 // background.js (service worker)
 
 // Listen for new target time from popup
-chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
+chrome.runtime.onMessage.addListener((msg, sender) => {
   if (msg.type === 'setSleepTime') {
     const now = Date.now();
     const target = msg.timestamp;
     const delay = target - now;
+    
     if (delay <= 0) {
-      return sendResponse({ success: false, error: 'Time must be in the future.' });
+      return { success: false, error: 'Time must be in the future.' };
     }
 
-    // Store both the start and target timestamp
-    chrome.storage.local.set({ sleepTarget: target, sleepStart: now });
+    // Store target timestamp
+    chrome.storage.local.set({ sleepTarget: target });
 
-    // Clear existing alarm, then create a new one
-    chrome.alarms.clear('sleepAlarm', () => {
+    // Clear existing alarms
+    chrome.alarms.clearAll(() => {
+      // Create main sleep alarm
       chrome.alarms.create('sleepAlarm', { when: target });
+      
+      // Create 30-min warning alarm
+      const thirtyMinBefore = target - 30 * 60 * 1000;
+      if (thirtyMinBefore > now) {
+        chrome.alarms.create('greyscaleAlarm', { when: thirtyMinBefore });
+      }
     });
 
-    sendResponse({ success: true });
+    return { success: true };
   }
+  return true; // Keep message channel open for async response
 });
 
-// Alarm fired: notify (could do more here)
+// Apply grayscale when alarm triggers
 chrome.alarms.onAlarm.addListener((alarm) => {
-  if (alarm.name === 'sleepAlarm') {
-    // Optionally you could push a notification here
-    console.log('Time to sleep!');
+  if (alarm.name === 'greyscaleAlarm') {
+    chrome.tabs.query({}, (tabs) => {
+      tabs.forEach(tab => {
+        if (tab.url?.startsWith('http')) {
+          chrome.scripting.insertCSS({
+            target: { tabId: tab.id },
+            files: ['annoy/30min/greyscale/greyscale.css']
+          }).catch(err => {
+            console.log(`Skipping tab ${tab.id}: ${err.message}`);
+          });
+        }
+      });
+    });
   }
 });
