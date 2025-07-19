@@ -1,11 +1,5 @@
 /* grayscale.css */
-html, body {
+body {
     filter: grayscale(100%) !important;
     -webkit-filter: grayscale(100%) !important;
-}
-#pet, #pet-container, #pet *, #pet-container * {
-    filter: none !important;
-    -webkit-filter: none !important;
-    color: inherit !important;
-    background: inherit !important;
 }
