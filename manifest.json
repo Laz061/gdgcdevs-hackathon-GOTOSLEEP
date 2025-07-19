@@ -21,7 +21,7 @@
   ],
   "web_accessible_resources": [
     {
-      "resources": ["annoy/30min/greyscale/greyscale.css"],
+      "resources": ["grayscale.css"],
       "matches": ["<all_urls>"]
     }
   ]
