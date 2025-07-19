@@ -19,7 +19,8 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
         const thirtyMinBefore = target - 30 * 60 * 1000;
         if (thirtyMinBefore > now) {
           chrome.alarms.create('30minAlarm', { when: thirtyMinBefore });
-        } else {
+        } else {  
+          // If less than 30 minutes remain, trigger greyscale immediately
           chrome.storage.local.set({ greyscaleActive: true });
           applyGreyscaleToAllTabs();
         }
@@ -31,16 +32,25 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
           chrome.storage.local.set({ corruptActive: true });
           applyCorruptToAllTabs();
         }
+        // 10-min alarm
+        const tenMinBefore = target - 10 * 60 * 1000;
+        if (tenMinBefore > now) {
+          chrome.alarms.create('10minAlarm', { when: tenMinBefore });
+        } else if (delay > 0 && delay <= 10 * 60 * 1000) {
+          chrome.storage.local.set({ zoomActive: true });
+          applyZoomToAllTabs();
+        }
         sendResponse({ success: true });
       });
     });
     return true;
   }
   if (msg.type === 'reset') {
-    chrome.storage.local.set({ greyscaleActive: false, corruptActive: false }, () => {
+    chrome.storage.local.set({ greyscaleActive: false, corruptActive: false, zoomActive: false }, () => {
       chrome.alarms.clearAll(() => {
         removeGreyscaleFromAllTabs();
         removeCorruptFromAllTabs();
+        removeZoomFromAllTabs();
         sendResponse({ success: true });
       });
     });
@@ -56,6 +66,7 @@ function applyGreyscaleToAllTabs() {
         chrome.scripting.insertCSS({
           target: { tabId: tab.id },
           files: ['annoy/30min/greyscale/greyscale.css']
+
         }).catch(err => {
           console.log(`Skipping tab ${tab.id}: ${err.message}`);
         });
@@ -112,6 +123,40 @@ function removeCorruptFromAllTabs() {
   // });
 }
 
+function applyZoomToAllTabs() {
+  chrome.storage.local.set({ zoomActive: true }, () => {
+    chrome.tabs.query({}, (tabs) => {
+      tabs.forEach(tab => {
+        if (tab.url?.startsWith('http')) {
+          chrome.scripting.executeScript({
+            target: { tabId: tab.id },
+            files: ['annoy/10min/zoom.js']
+          }).catch(err => {
+            console.log(`Skipping tab ${tab.id}: ${err.message}`);
+          });
+        }
+      });
+    });
+  });
+}
+
+function removeZoomFromAllTabs() {
+  chrome.storage.local.set({ zoomActive: false }, () => {
+    chrome.tabs.query({}, (tabs) => {
+      tabs.forEach(tab => {
+        if (tab.url?.startsWith('http')) {
+          chrome.scripting.executeScript({
+            target: { tabId: tab.id },
+            files: ['annoy/10min/unzoom.js']
+          }).catch(err => {
+            console.log(`Skipping tab ${tab.id}: ${err.message}`);
+          });
+        }
+      });
+    });
+  });
+}
+
 chrome.alarms.onAlarm.addListener((alarm) => {
   if (alarm.name === '30minAlarm') {
     notifyPet();
@@ -121,28 +166,53 @@ chrome.alarms.onAlarm.addListener((alarm) => {
     notifyPet();
     applyCorruptToAllTabs();
   }
-});
+  if (alarm.name === '10minAlarm') {
+    notifyPet();
+    applyZoomToAllTabs();
+  }
+  if (alarm.name === 'sleepAlarm') {
+    flashTimeOnAllTabs();
+    }
+  });
+
+  
+
 
 chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
   if (changeInfo.status === 'complete' && tab.url?.startsWith('http')) {
-    chrome.storage.local.get(['greyscaleActive', 'corruptActive'], ({ greyscaleActive, corruptActive }) => {
+    chrome.storage.local.get(['greyscaleActive', 'corruptActive', 'zoomActive'], ({ greyscaleActive, corruptActive, zoomActive }) => {
       if (greyscaleActive) {
-        notifyPet();
+
         applyGreyscaleToAllTabs();
       }
       if (corruptActive) {
-        notifyPet();
+
         applyCorruptToAllTabs();
+      }
+      if (zoomActive) {
+
+        applyZoomToAllTabs();
       }
     });
   }
 });
 
 function notifyPet() {
+  // Log to the console that the function was called
   console.log('notifyPet called');
+  
+  // Query for the currently active tab in the current window
+
+  //active: true, currentWindow: true
   chrome.tabs.query({active: true, currentWindow: true}, (tabs) => {
+
+    // For each tab returned (should be one, but could be more in rare cases)
     tabs.forEach(tab => {
+      
+      // Log to the console that a message is being sent to this tab
       console.log('Sending petReact to tab', tab.id);
+      
+      // Send a message of type 'petReact' to the content script in this tab
       chrome.tabs.sendMessage(tab.id, { type: 'petReact' });
     });
   });

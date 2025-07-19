@@ -22,12 +22,16 @@
     }
   ],
 
-  "web_accessible_resources": [
-  {
-    "resources": ["pet/pet.png", "pet/petr.png"],
+"web_accessible_resources": [{
+    "resources": [
+      "pet/pet.png",
+      "pet/petr.png",
+      "annoy/0sec/flashtime/timeflash.js",
+      "annoy/0sec/flashtime/gojo.gif"
+    ],
+  
     "matches": ["<all_urls>"]
-  }
-  ],
+  }],
 
   "background": {
     "service_worker": "background.js"
