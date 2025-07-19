@@ -114,6 +114,7 @@ function removeCorruptFromAllTabs() {
 
 chrome.alarms.onAlarm.addListener((alarm) => {
   if (alarm.name === '30minAlarm') {
+    notifyPet();
     applyGreyscaleToAllTabs();
   }
   if (alarm.name === '20minAlarm') {
@@ -125,6 +126,7 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
   if (changeInfo.status === 'complete' && tab.url?.startsWith('http')) {
     chrome.storage.local.get(['greyscaleActive', 'corruptActive'], ({ greyscaleActive, corruptActive }) => {
       if (greyscaleActive) {
+        notifyPet();
         applyGreyscaleToAllTabs();
       }
       if (corruptActive) {
@@ -133,3 +135,13 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
     });
   }
 });
+
+function notifyPet() {
+  console.log('notifyPet called');
+  chrome.tabs.query({active: true, currentWindow: true}, (tabs) => {
+    tabs.forEach(tab => {
+      console.log('Sending petReact to tab', tab.id);
+      chrome.tabs.sendMessage(tab.id, { type: 'petReact' });
+    });
+  });
+}
