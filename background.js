@@ -118,6 +118,7 @@ chrome.alarms.onAlarm.addListener((alarm) => {
     applyGreyscaleToAllTabs();
   }
   if (alarm.name === '20minAlarm') {
+    notifyPet();
     applyCorruptToAllTabs();
   }
 });
@@ -130,6 +131,7 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
         applyGreyscaleToAllTabs();
       }
       if (corruptActive) {
+        notifyPet();
         applyCorruptToAllTabs();
       }
     });
