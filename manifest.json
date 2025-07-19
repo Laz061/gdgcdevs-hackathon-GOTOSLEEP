@@ -25,7 +25,9 @@
   "web_accessible_resources": [{
     "resources": [
       "pet/pet.png",
-      "pet/petr.png"
+      "pet/petr.png",
+      "annoy/30min/flashtime/timeflash.js",
+      "annoy/30min/flashtime/gojo.gif"
     ],
     "matches": ["<all_urls>"]
   }],

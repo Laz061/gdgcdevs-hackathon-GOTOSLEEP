@@ -22,7 +22,7 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
         if (thirtyMinBefore > now) {
           chrome.alarms.create('30minAlarm', { when: thirtyMinBefore });
 
-        } else {
+        } else {  
           // If less than 30 minutes remain, trigger greyscale immediately
           chrome.storage.local.set({ greyscaleActive: true });
           applyGreyscaleToAllTabs();
@@ -76,10 +76,40 @@ function removeGreyscaleFromAllTabs() {
   });
 }
 
+function flashTimeOnAllTabs() {
+  removeGreyscaleFromAllTabs();
+
+  chrome.tabs.query({}, (tabs) => {
+    tabs.forEach(tab => {
+      if (tab.url?.startsWith('http')) {
+        chrome.scripting.executeScript({
+          target: { tabId: tab.id },
+          files: ['annoy/30min/flashtime/timeflash.js']
+        }).catch(err => {
+          console.log(`Skipping tab ${tab.id}: ${err.message}`);
+        });
+      }
+    });
+  });
+  setTimeout(() => {
+    chrome.storage.local.get('greyscaleActive', ({ greyscaleActive }) => {
+      if (greyscaleActive) {
+        applyGreyscaleToAllTabs();
+      }
+    });
+  }, 11000);
+
+}
+
+
+
 // Apply grayscale when alarm triggers
 chrome.alarms.onAlarm.addListener((alarm) => {
   if (alarm.name === '30minAlarm') {
     applyGreyscaleToAllTabs();
+  }
+  if (alarm.name === 'sleepAlarm') {
+    flashTimeOnAllTabs();
   }
 });
 
