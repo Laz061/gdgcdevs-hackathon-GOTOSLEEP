@@ -113,3 +113,23 @@ function startDisplay(targetTs, startTs) {
   updateCountdown(); // Show immediately
   intervalId = setInterval(updateCountdown, 1000);
 }
+
+// Add this to your existing popup.js
+function setSleepTime() {
+  const parsedTime = parseTimeInput(sleepTimeInput.value);
+  
+  if (!parsedTime) {
+    alert('Please enter a valid time (e.g. 9:30PM or 21:30)');
+    return;
+  }
+
+  // Send to background.js
+  chrome.runtime.sendMessage({
+    type: 'setSleepTime',
+    timestamp: parsedTime.getTime()
+  }, (response) => {
+    if (response && !response.success) {
+      alert(response.error || 'Failed to set timer');
+    }
+  });
+}
