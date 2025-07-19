@@ -10,3 +10,11 @@
   filter: none !important;
   -webkit-filter: none !important;
 }
+
+.pet {
+  position: fixed !important;
+  bottom: 20px !important;
+  z-index: 999999 !important;
+  filter: none !important;
+  pointer-events: none;
+}
