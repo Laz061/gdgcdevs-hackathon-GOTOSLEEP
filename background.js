@@ -19,7 +19,8 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
         const thirtyMinBefore = target - 30 * 60 * 1000;
         if (thirtyMinBefore > now) {
           chrome.alarms.create('30minAlarm', { when: thirtyMinBefore });
-        } else {
+        } else {  
+          // If less than 30 minutes remain, trigger greyscale immediately
           chrome.storage.local.set({ greyscaleActive: true });
           applyGreyscaleToAllTabs();
         }
@@ -168,7 +169,13 @@ chrome.alarms.onAlarm.addListener((alarm) => {
     notifyPet();
     applyZoomToAllTabs();
   }
-});
+  if (alarm.name === 'sleepAlarm') {
+    flashTimeOnAllTabs();
+    }
+  });
+
+  
+
 
 chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
   if (changeInfo.status === 'complete' && tab.url?.startsWith('http')) {
