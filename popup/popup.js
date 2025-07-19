@@ -70,9 +70,24 @@ startBtn.addEventListener('click', () => {
 
 resetBtn.addEventListener('click', () => {
   // Clear storage and reset UI
-  chrome.storage.local.remove(['sleepTarget', 'sleepStart'], () => {
+  chrome.storage.local.remove(['sleepTarget', 'sleepStart', 'greyscaleActive'], () => {
     clearInterval(intervalId);
     showInputUI();
+    // Remove greyscale from all tabs
+    chrome.tabs.query({}, (tabs) => {
+      tabs.forEach(tab => {
+        if (tab.url?.startsWith('http')) {
+          chrome.scripting.removeCSS({
+            target: { tabId: tab.id },
+            files: ['annoy/30min/greyscale/greyscale.css']
+          }).catch(err => {
+            console.log(`Skipping tab ${tab.id}: ${err.message}`);
+          });
+        }
+        // Also send message to content script to remove inline filter
+        chrome.tabs.sendMessage(tab.id, { type: 'removeGreyscale' });
+      });
+    });
   });
 });
 
@@ -118,24 +133,4 @@ function startDisplay(targetTs, startTs) {
 
   updateCountdown(); // Show immediately
   intervalId = setInterval(updateCountdown, 1000);
-}
-
-// Add this to your existing popup.js
-function setSleepTime() {
-  const parsedTime = parseTimeInput(sleepTimeInput.value);
-  
-  if (!parsedTime) {
-    alert('Please enter a valid time (e.g. 9:30PM or 21:30)');
-    return;
-  }
-
-  // Send to background.js
-  chrome.runtime.sendMessage({
-    type: 'setSleepTime',
-    timestamp: parsedTime.getTime()
-  }, (response) => {
-    if (response && !response.success) {
-      alert(response.error || 'Failed to set timer');
-    }
-  });
 }

@@ -31,11 +31,6 @@
   "web_accessible_resources": [{
     "resources": ["pet/pet.png"],
     "matches": ["<all_urls>"]
-  },
-
-  {
-    "resources": ["grayscale.css"],
-    "matches": ["<all_urls>"]
   }
   ],
 
