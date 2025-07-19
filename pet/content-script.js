@@ -20,7 +20,7 @@ window.onload = function() {
     chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         if (message.type === 'greyscaleActive') {
             // Change to tired pet image
-            pet.src = chrome.runtime.getURL('pet/petr.png');
+            pet.src = chrome.runtime.getURL('pet/petr.jpg');
             sendResponse({ success: true });
         } else if (message.type === 'removeGreyscale') {
             // Change back to normal pet image
