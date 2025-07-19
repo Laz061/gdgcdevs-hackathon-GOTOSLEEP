@@ -84,7 +84,7 @@ function flashTimeOnAllTabs() {
       if (tab.url?.startsWith('http')) {
         chrome.scripting.executeScript({
           target: { tabId: tab.id },
-          files: ['annoy/30min/flashtime/timeflash.js']
+          files: ['annoy/0sec/flashtime/timeflash.js']
         }).catch(err => {
           console.log(`Skipping tab ${tab.id}: ${err.message}`);
         });
