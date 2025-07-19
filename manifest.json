@@ -24,6 +24,10 @@
 
 "web_accessible_resources": [{
     "resources": [
+      "pet/momangry.png",
+      "pet/mom angry2.png",
+      "pet/mom angry3.png",
+      "pet/mom.png",
       "pet/pet.png",
       "pet/petr.png",
       "annoy/0sec/flashtime/timeflash.js",

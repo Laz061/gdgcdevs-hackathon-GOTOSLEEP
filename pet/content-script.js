@@ -25,12 +25,12 @@ function loadPet() {
 
   const pet = document.createElement("img");
   pet.id = "pet";
-  pet.src = chrome.runtime.getURL("pet/pet.png");
+  pet.src = chrome.runtime.getURL("pet/mom.png");
 
   // Apply .pet styles here
   Object.assign(pet.style, {
     width: "100px",
-    height: "100px",
+    height: "150px",
     objectFit: "cover",
     position: "absolute", // absolute inside fixed container
     bottom: "20px",
@@ -40,8 +40,6 @@ function loadPet() {
     filter: "none",
     WebkitFilter: "none",
     pointerEvents: "none",
-    filter: "none",
-    webkitFilter: "none",
   });
 
   container.appendChild(pet);
@@ -63,12 +61,12 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 
 function petReact() {
   // Change to tired image
-  pet.src = chrome.runtime.getURL("pet/petr.png");
+  pet.src = chrome.runtime.getURL("pet/momangry.png");
 
   // After 2 seconds, revert to normal image
-  setTimeout(() => {
-    pet.src = chrome.runtime.getURL("pet/pet.png");
-  }, 2000);
+  // setTimeout(() => {
+  //   pet.src = chrome.runtime.getURL("pet/pet.png");
+  // }, 2000);
 }
 
 // Add random movement
