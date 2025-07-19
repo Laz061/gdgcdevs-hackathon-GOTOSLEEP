@@ -3,13 +3,35 @@
   "description": "A simple extension that asks for nothing else, but for you to go..to..sleep.",
   "version": "1.0",
   "manifest_version": 3,
+
   "action": {
     "default_popup": "popup/popup.html",
     "default_icon": "icon.png"
   },
+
+  "content_scripts": [
+    {
+      "js": [
+        "pet/content-script.js"
+      ],
+      "css": [
+        "pet/pet.css"
+      ],
+      "matches": ["<all_urls>"],
+      "run_at": "document_idle"
+    }
+  ],
+
+  "web_accessible_resources": [{
+    "resources": ["pet/pet.png"],
+    "matches": ["<all_urls>"]
+  }],
+
   "background": {
     "service_worker": "background.js"
   },
+  
+
   "permissions": ["storage", "alarms", "tabs", "scripting", "activeTab"],
   "host_permissions": ["<all_urls>"],
   "content_scripts": [
@@ -26,3 +48,11 @@
     }
   ]
 }
+
+  "icons": {
+    "16": "icon.png",
+    "48": "icon.png",
+    "128": "icon.png"
+  }
+}
+
