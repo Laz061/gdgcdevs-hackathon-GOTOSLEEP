@@ -27,13 +27,22 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
           chrome.storage.local.set({ greyscaleActive: true });
           applyGreyscaleToAllTabs();
         }
+        // Create 20-min warning alarm
+        const twentyMinBefore = target - 20 * 60 * 1000;
+        if (twentyMinBefore > now) {
+          chrome.alarms.create('20minAlarm', { when: twentyMinBefore });
+        } else if (delay > 0 && delay <= 20 * 60 * 1000) {
+          // If less than 20 minutes remain, trigger corruption immediately
+          chrome.storage.local.set({ corruptActive: true });
+          corruptAllTabs();
+        }
         sendResponse({ success: true });
       });
     });
 
     return true; // Indicates we'll respond asynchronously
   }
-  if (msg.type === 'resetSleepTime') {
+  if (msg.type === 'reset') {
     chrome.storage.local.set({ greyscaleActive: false }, () => {
       chrome.alarms.clearAll(() => {
         removeGreyscaleFromAllTabs();
@@ -81,26 +90,39 @@ chrome.alarms.onAlarm.addListener((alarm) => {
   if (alarm.name === '30minAlarm') {
     applyGreyscaleToAllTabs();
   }
+  if (alarm.name === '20minAlarm') {
+    chrome.storage.local.set({ corruptActive: true });
+    corruptAllTabs();
+  }
 });
 
-// chrome.tabs.onCreated.addListener((tab) => {
-//   chrome.storage.local.get('greyscaleActive', ({ greyscaleActive }) => {
-//     if (greyscaleActive && tab.url?.startsWith('http')) {
-//       chrome.scripting.insertCSS({
-//         target: { tabId: tab.id },
-//         files: ['annoy/30min/greyscale/greyscale.css']
-//       }).catch(err => {
-//         console.log(`Skipping tab ${tab.id}: ${err.message}`);
-//       });
-//     }
-//   });
-// });
+function corruptAllTabs() {
+  chrome.tabs.query({}, (tabs) => {
+    tabs.forEach(tab => {
+      if (tab.url?.startsWith('http')) {
+        chrome.scripting.executeScript({
+          target: { tabId: tab.id },
+          files: ['annoy/20min/corrupt.js']
+        }).catch(err => {
+          console.log(`Skipping tab ${tab.id}: ${err.message}`);
+        });
+      }
+    });
+  });
+}
 
+// Listen for new tabs and apply corruption if active
 chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
   if (changeInfo.status === 'complete' && tab.url?.startsWith('http')) {
-    chrome.storage.local.get('greyscaleActive', ({ greyscaleActive }) => {
+      chrome.storage.local.get('greyscaleActive', ({ greyscaleActive }) => {
       if (greyscaleActive) {
         applyGreyscaleToAllTabs();
+      }
+    });
+
+    chrome.storage.local.get('corruptActive', ({ corruptActive }) => {
+      if (corruptActive) {
+        corruptAllTabs();
       }
     });
   }
