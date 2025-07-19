@@ -29,10 +29,12 @@
   ],
 
   "web_accessible_resources": [{
-    "resources": ["pet/pet.png"],
+    "resources": [
+      "pet/pet.png",
+      "pet/petr.png"
+    ],
     "matches": ["<all_urls>"]
-  }
-  ],
+  }],
 
   "background": {
     "service_worker": "background.js"
