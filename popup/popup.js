@@ -7,7 +7,6 @@ const secondsEl  = document.getElementById('seconds');
 const progressBar= document.querySelector('.progress-bar');
 const progressEl = document.getElementById('progress');
 const messageEl  = document.getElementById('message');
-const loadingEl  = document.getElementById('loading');
 const resetBtn   = document.getElementById('resetBtn');
 const labelEl    = document.querySelector('label[for="sleepTime"]');
 
@@ -27,14 +26,16 @@ function showInputUI() {
 }
 
 // On load, restore any existing target and start updating
-document.addEventListener('DOMContentLoaded', () => {
-  // Show loading spinner while fetching state
-  loadingEl.classList.remove('hidden');
+// Always restore timer state from background storage
+// Use sleepStart from storage for progress calculation
 
+document.addEventListener('DOMContentLoaded', () => {
   chrome.storage.local.get(['sleepTarget', 'sleepStart'], ({ sleepTarget, sleepStart }) => {
-    loadingEl.classList.add('hidden');
     if (sleepTarget && sleepStart) {
       startDisplay(sleepTarget, sleepStart);
+    } else if (sleepTarget) {
+      // Fallback for legacy: if only sleepTarget exists, use popup open time as start
+      startDisplay(sleepTarget, Date.now());
     } else {
       showInputUI();
     }
@@ -55,17 +56,38 @@ startBtn.addEventListener('click', () => {
   chrome.runtime.sendMessage(
     { type: 'setSleepTime', timestamp: ts },
     (resp) => {
-      if (resp.success) startDisplay(ts, Date.now());
-      else alert(resp.error);
+      if (resp.success) {
+        // Store start time persistently for progress bar
+        chrome.storage.local.set({ sleepStart: Date.now() }, () => {
+          startDisplay(ts, Date.now());
+        });
+      } else {
+        alert(resp.error);
+      }
     }
   );
 });
 
 resetBtn.addEventListener('click', () => {
   // Clear storage and reset UI
-  chrome.storage.local.remove(['sleepTarget', 'sleepStart'], () => {
+  chrome.storage.local.remove(['sleepTarget', 'sleepStart', 'greyscaleActive'], () => {
     clearInterval(intervalId);
     showInputUI();
+    // Remove greyscale from all tabs
+    chrome.tabs.query({}, (tabs) => {
+      tabs.forEach(tab => {
+        if (tab.url?.startsWith('http')) {
+          chrome.scripting.removeCSS({
+            target: { tabId: tab.id },
+            files: ['annoy/30min/greyscale/greyscale.css']
+          }).catch(err => {
+            console.log(`Skipping tab ${tab.id}: ${err.message}`);
+          });
+        }
+        // Also send message to content script to remove inline filter
+        chrome.tabs.sendMessage(tab.id, { type: 'removeGreyscale' });
+      });
+    });
   });
 });
 
@@ -78,7 +100,6 @@ function startDisplay(targetTs, startTs) {
   countdownEl.classList.remove('hidden');
   progressBar.classList.remove('hidden');
   messageEl.classList.add('hidden');
-  loadingEl.classList.add('hidden');
 
   clearInterval(intervalId);
 
