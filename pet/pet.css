@@ -4,6 +4,17 @@
   object-fit: cover;
   position: fixed;
   bottom: 20px;
-  right: 20px;
-  z-index: 9999;
+  left: 20px;      /* Changed from right: 20px to left: 20px for consistency */
+  z-index: 99999;  /* Increased to match JS */
+  transition: all 2s ease-in-out;
+  filter: none !important;
+  -webkit-filter: none !important;
+}
+
+.pet {
+  position: fixed !important;
+  bottom: 20px !important;
+  z-index: 999999 !important;
+  filter: none !important;
+  pointer-events: none;
 }
