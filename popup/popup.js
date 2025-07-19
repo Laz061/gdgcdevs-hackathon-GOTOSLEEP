@@ -27,14 +27,19 @@ function showInputUI() {
 }
 
 // On load, restore any existing target and start updating
+// Always restore timer state from background storage
+// Use sleepStart from storage for progress calculation
+
 document.addEventListener('DOMContentLoaded', () => {
-  // Show loading spinner while fetching state
   loadingEl.classList.remove('hidden');
 
   chrome.storage.local.get(['sleepTarget', 'sleepStart'], ({ sleepTarget, sleepStart }) => {
     loadingEl.classList.add('hidden');
     if (sleepTarget && sleepStart) {
       startDisplay(sleepTarget, sleepStart);
+    } else if (sleepTarget) {
+      // Fallback for legacy: if only sleepTarget exists, use popup open time as start
+      startDisplay(sleepTarget, Date.now());
     } else {
       showInputUI();
     }
@@ -55,8 +60,14 @@ startBtn.addEventListener('click', () => {
   chrome.runtime.sendMessage(
     { type: 'setSleepTime', timestamp: ts },
     (resp) => {
-      if (resp.success) startDisplay(ts, Date.now());
-      else alert(resp.error);
+      if (resp.success) {
+        // Store start time persistently for progress bar
+        chrome.storage.local.set({ sleepStart: Date.now() }, () => {
+          startDisplay(ts, Date.now());
+        });
+      } else {
+        alert(resp.error);
+      }
     }
   );
 });
