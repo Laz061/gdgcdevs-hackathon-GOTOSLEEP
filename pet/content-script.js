@@ -40,6 +40,8 @@ function loadPet() {
     filter: "none",
     WebkitFilter: "none",
     pointerEvents: "none",
+    filter: "none",
+    webkitFilter: "none",
   });
 
   container.appendChild(pet);
