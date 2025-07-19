@@ -78,20 +78,22 @@ resetBtn.addEventListener('click', () => {
     clearInterval(intervalId);
     showInputUI();
     // Remove greyscale from all tabs
-    chrome.tabs.query({}, (tabs) => {
-      tabs.forEach(tab => {
-        if (tab.url?.startsWith('http')) {
-          chrome.scripting.removeCSS({
-            target: { tabId: tab.id },
-            files: ['annoy/30min/greyscale/greyscale.css']
-          }).catch(err => {
-            console.log(`Skipping tab ${tab.id}: ${err.message}`);
-          });
-        }
-        // Also send message to content script to remove inline filter
-        chrome.tabs.sendMessage(tab.id, { type: 'removeGreyscale' });
-      });
-    });
+    // chrome.tabs.query({}, (tabs) => {
+    //   tabs.forEach(tab => {
+    //     if (tab.url?.startsWith('http')) {
+    //       chrome.scripting.removeCSS({
+    //         target: { tabId: tab.id },
+    //         files: ['annoy/30min/greyscale/greyscale.css']
+    //       }).catch(err => {
+    //         console.log(`Skipping tab ${tab.id}: ${err.message}`);
+    //       });
+    //     }
+    //     // // Also send message to content script to remove inline filter
+    //     // chrome.tabs.sendMessage(tab.id, { type: 'removeGreyscale' });
+    //   });
+    // });
+    chrome.runtime.sendMessage(
+    { type: 'resetSleepTime'});
   });
 });
 
