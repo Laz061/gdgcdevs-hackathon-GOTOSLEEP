@@ -18,6 +18,7 @@ window.onload = function() {
 
     // Listen for petReact event
     chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+
       if (message.type === 'petReact') {
         console.log('petReact message received');
         petReact();
