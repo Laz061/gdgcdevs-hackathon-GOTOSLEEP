@@ -16,18 +16,24 @@ window.onload = function() {
     
     console.log('Pet element created and added to page');
 
-    // Listen for greyscale activation
+    // Listen for petReact event
     chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-        if (message.type === 'greyscaleActive') {
-            // Change to tired pet image
-            pet.src = chrome.runtime.getURL('pet/petr.png');
-            sendResponse({ success: true });
-        } else if (message.type === 'removeGreyscale') {
-            // Change back to normal pet image
-            pet.src = chrome.runtime.getURL('pet/pet.png');
-            sendResponse({ success: true });
-        }
+      if (message.type === 'petReact') {
+        console.log('petReact message received');
+        petReact();
+      }
+      
     });
+
+    function petReact() {
+      // Change to tired image
+      pet.src = chrome.runtime.getURL('pet/petr.png');
+
+      // After 2 seconds, revert to normal image
+      setTimeout(() => {
+        pet.src = chrome.runtime.getURL('pet/pet.png');
+      }, 2000);
+    }
 
     // Add random movement
     function moveRandomly() {
