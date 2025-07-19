@@ -79,29 +79,28 @@ function removeGreyscaleFromAllTabs() {
 // Apply grayscale when alarm triggers
 chrome.alarms.onAlarm.addListener((alarm) => {
   if (alarm.name === '30minAlarm') {
+    notifyPet();
     applyGreyscaleToAllTabs();
   }
 });
-
-// chrome.tabs.onCreated.addListener((tab) => {
-//   chrome.storage.local.get('greyscaleActive', ({ greyscaleActive }) => {
-//     if (greyscaleActive && tab.url?.startsWith('http')) {
-//       chrome.scripting.insertCSS({
-//         target: { tabId: tab.id },
-//         files: ['annoy/30min/greyscale/greyscale.css']
-//       }).catch(err => {
-//         console.log(`Skipping tab ${tab.id}: ${err.message}`);
-//       });
-//     }
-//   });
-// });
 
 chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
   if (changeInfo.status === 'complete' && tab.url?.startsWith('http')) {
     chrome.storage.local.get('greyscaleActive', ({ greyscaleActive }) => {
       if (greyscaleActive) {
+        notifyPet();
         applyGreyscaleToAllTabs();
       }
     });
   }
 });
+
+function notifyPet() {
+  console.log('notifyPet called');
+  chrome.tabs.query({active: true, currentWindow: true}, (tabs) => {
+    tabs.forEach(tab => {
+      console.log('Sending petReact to tab', tab.id);
+      chrome.tabs.sendMessage(tab.id, { type: 'petReact' });
+    });
+  });
+}
