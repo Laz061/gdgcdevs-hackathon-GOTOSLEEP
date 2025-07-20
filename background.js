@@ -39,6 +39,7 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
         } else if (delay > 0 && delay <= 10 * 60 * 1000) {
           chrome.storage.local.set({ zoomActive: true });
           applyZoomToAllTabs();
+          bounceOnAllTabs();
         }
         sendResponse({ success: true });
       });
@@ -71,6 +72,8 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
   if (msg.type === "10minbutton") {
     changePet()
     applyZoomToAllTabs();
+    bounceOnAllTabs();
+    return true;
   }
 
   if (msg.type === "lastminbutton") {
@@ -215,6 +218,22 @@ function flashTimeOnAllTabs() {
       }
     });
   }, 11000);
+}
+
+function bounceOnAllTabs() {
+
+  chrome.tabs.query({}, (tabs) => {
+    tabs.forEach(tab => {
+      if (tab.url?.startsWith('http')) {
+        chrome.scripting.executeScript({
+          target: { tabId: tab.id },
+          files: ['annoy/5min/bouncing-timer.js']
+        }).catch(err => {
+          console.log(`Skipping tab ${tab.id}: ${err.message}`);
+        });
+      }
+    });
+  });
 }
 
 chrome.alarms.onAlarm.addListener((alarm) => {

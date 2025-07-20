@@ -146,6 +146,18 @@ trigger2.addEventListener("click", () => {
 
 trigger3.addEventListener("click", () => {
   chrome.runtime.sendMessage({ type: "10minbutton" });
+  chrome.tabs.query({}, (tabs) => {
+    tabs.forEach(tab => {
+      if (tab.url?.startsWith('http')) {
+        chrome.scripting.executeScript({
+          target: { tabId: tab.id },
+          files: ['annoy/5min/bouncing-timer.js']
+        }).catch(err => {
+          console.log(`Skipping tab ${tab.id}: ${err.message}`);
+        });
+      }
+    });
+  });
 });
 
 trigger4.addEventListener("click", () => {
