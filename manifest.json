@@ -24,6 +24,8 @@
 
 "web_accessible_resources": [{
     "resources": [
+      "pet/momb.png",
+      "pet/moma.png",
       "pet/momangry.png",
       "pet/mom angry2.png",
       "pet/mom angry3.png",
