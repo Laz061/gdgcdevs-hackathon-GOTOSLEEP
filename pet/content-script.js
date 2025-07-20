@@ -1,8 +1,6 @@
-window.onload = loadPet();
+// window.onload = loadPet();
 
 function loadPet() {
-  console.log("Window loaded, attempting to create pet...");
-
   if (document.getElementById("pet-container")) {
     console.log("Pet already exists, skipping creation");
     return;
@@ -25,12 +23,12 @@ function loadPet() {
 
   const pet = document.createElement("img");
   pet.id = "pet";
-  pet.src = chrome.runtime.getURL("pet/pet.png");
+  pet.src = chrome.runtime.getURL("pet/momb.png");
 
   // Apply .pet styles here
   Object.assign(pet.style, {
     width: "100px",
-    height: "100px",
+    height: "150px",
     objectFit: "cover",
     position: "absolute", // absolute inside fixed container
     bottom: "20px",
@@ -53,20 +51,23 @@ function loadPet() {
 
 // Listen for petReact event
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-  if (message.type === "petReact") {
-    console.log("petReact message received");
+  if (message.type === "loadPet") {
+    loadPet();
+  }
+
+  if (message.type === "changePet") {
     petReact();
   }
 });
 
 function petReact() {
   // Change to tired image
-  pet.src = chrome.runtime.getURL("pet/petr.png");
+  pet.src = chrome.runtime.getURL("pet/moma.png");
 
   // After 2 seconds, revert to normal image
-  setTimeout(() => {
-    pet.src = chrome.runtime.getURL("pet/pet.png");
-  }, 2000);
+  // setTimeout(() => {
+  //   pet.src = chrome.runtime.getURL("pet/pet.png");
+  // }, 2000);
 }
 
 // Add random movement

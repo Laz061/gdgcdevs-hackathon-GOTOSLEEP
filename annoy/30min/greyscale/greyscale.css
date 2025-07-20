@@ -1,5 +1,5 @@
 /* grayscale.css */
-html, body {
+body {
     filter: grayscale(100%) !important;
     -webkit-filter: grayscale(100%) !important;
 }

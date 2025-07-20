@@ -123,3 +123,31 @@ function startDisplay(targetTs, startTs) {
   updateCountdown(); // Show immediately
   intervalId = setInterval(updateCountdown, 1000);
 }
+
+const devToggle = document.getElementById("devToggle");
+const devMode = document.getElementById("devMode");
+const trigger1 = document.getElementById("trigger1");
+const trigger2 = document.getElementById("trigger2");
+const trigger3 = document.getElementById("trigger3");
+const trigger4 = document.getElementById("trigger4");
+
+devToggle.addEventListener("change", () => {
+  devMode.classList.toggle("hidden", !devToggle.checked);
+});
+
+// Example developer triggers
+trigger1.addEventListener("click", () => {
+  chrome.runtime.sendMessage({ type: "30minbutton" });
+});
+
+trigger2.addEventListener("click", () => {
+  chrome.runtime.sendMessage({ type: "20minbutton" });
+});
+
+trigger3.addEventListener("click", () => {
+  chrome.runtime.sendMessage({ type: "10minbutton" });
+});
+
+trigger4.addEventListener("click", () => {
+  chrome.runtime.sendMessage({ type: "lastminbutton" });
+});

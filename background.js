@@ -56,6 +56,25 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
     });
     return true;
   }
+
+  if (msg.type === "30minbutton") {
+    showPet();
+    applyGreyscaleToAllTabs();
+    return true;
+  }
+
+  if (msg.type === "20minbutton") {
+    applyCorruptToAllTabs()
+    return true;
+  }
+
+  if (msg.type === "10minbutton") {
+    changePet()
+    applyZoomToAllTabs();
+  }
+
+  if (msg.type === "lastminbutton") {
+  }
 });
 
 function applyGreyscaleToAllTabs() {
@@ -66,6 +85,7 @@ function applyGreyscaleToAllTabs() {
         chrome.scripting.insertCSS({
           target: { tabId: tab.id },
           files: ['annoy/30min/greyscale/greyscale.css']
+
         }).catch(err => {
           console.log(`Skipping tab ${tab.id}: ${err.message}`);
         });
@@ -219,38 +239,39 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
   if (changeInfo.status === 'complete' && tab.url?.startsWith('http')) {
     chrome.storage.local.get(['greyscaleActive', 'corruptActive', 'zoomActive'], ({ greyscaleActive, corruptActive, zoomActive }) => {
       if (greyscaleActive) {
-
         applyGreyscaleToAllTabs();
       }
       if (corruptActive) {
-
         applyCorruptToAllTabs();
       }
       if (zoomActive) {
-
         applyZoomToAllTabs();
       }
     });
   }
 });
 
-function notifyPet() {
-  // Log to the console that the function was called
-  console.log('notifyPet called');
-  
+function showPet() {
+  // Query for the currently active tab in the current window
+  //active: true, currentWindow: true
+  chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+    // For each tab returned (should be one, but could be more in rare cases)
+    tabs.forEach((tab) => {
+      // Send a message of type 'petReact' to the content script in this tab
+      chrome.tabs.sendMessage(tab.id, { type: "loadPet" });
+    });
+  });
+}
+
+function changePet() {
   // Query for the currently active tab in the current window
 
   //active: true, currentWindow: true
-  chrome.tabs.query({active: true, currentWindow: true}, (tabs) => {
-
+  chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
     // For each tab returned (should be one, but could be more in rare cases)
-    tabs.forEach(tab => {
-      
-      // Log to the console that a message is being sent to this tab
-      console.log('Sending petReact to tab', tab.id);
-      
+    tabs.forEach((tab) => {
       // Send a message of type 'petReact' to the content script in this tab
-      chrome.tabs.sendMessage(tab.id, { type: 'petReact' });
+      chrome.tabs.sendMessage(tab.id, { type: "changePet" });
     });
   });
 }
