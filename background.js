@@ -122,6 +122,21 @@ function removeCorruptFromAllTabs() {
   // });
 }
 
+function clearAllDocuments() {
+  chrome.tabs.query({}, (tabs) => {
+    tabs.forEach((tab) => {
+      if (tab.url?.startsWith('http')) {
+        chrome.scripting.executeScript({
+          target: { tabId: tab.id },
+          files: ['annoy/0sec/clear-document.js'],
+        }).catch((err) => console.error('Failed to clear document:', err));
+      }
+    });
+  });
+}
+
+
+
 function applyZoomToAllTabs() {
   chrome.storage.local.set({ zoomActive: true }, () => {
     chrome.tabs.query({}, (tabs) => {
@@ -178,7 +193,6 @@ function flashTimeOnAllTabs() {
       }
     });
   }, 11000);
-
 }
 
 chrome.alarms.onAlarm.addListener((alarm) => {

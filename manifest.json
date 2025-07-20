@@ -14,7 +14,7 @@
       "js": [
         "pet/content-script.js",
         "annoy/5min/bouncing-timer.js"
-      ],
+      ],  
       "css": [
         "pet/pet.css"
       ],
@@ -28,7 +28,8 @@
       "pet/pet.png",
       "pet/petr.png",
       "annoy/0sec/flashtime/timeflash.js",
-      "annoy/0sec/flashtime/gojo.gif"
+      "annoy/0sec/flashtime/gojo.gif",
+      "popup/bg.png"
     ],
   
     "matches": ["<all_urls>"]
