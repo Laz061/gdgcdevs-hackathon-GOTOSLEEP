@@ -206,6 +206,11 @@ button.button-29:active {
   color: #d9534f;
 }
 
+.toggle{
+  margin: 5px;
+  display: block;
+}
+
 .hidden {
   display: none;
 }

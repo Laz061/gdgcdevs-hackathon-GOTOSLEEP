@@ -9,7 +9,7 @@
 </head>
 <body>
   <div class="container">
-    <h1>Sleep Timer</h1>
+    <h1>Go.To.Sleep</h1>
     <label for="sleepTime">Go to sleep at:</label>
     <input type="time" id="sleepTime" />
     <button id="startBtn" class="button-29">Start Countdown</button>
@@ -39,7 +39,20 @@
     <div id="message" class="hidden">
       <p>⏰ Go to sleep!</p>
     </div>
-  </div>
+
+    <div class="toggle">
+      <div id="devMode" class="hidden">
+        <button id="trigger1">30 Mins</button>
+        <button id="trigger2">20 Mins</button>
+        <button id="trigger3">10 Mins</button>
+        <button id="trigger4">Bed Time</button>
+      </div>
+
+      
+        <label>
+          <input type="checkbox" id="devToggle"> Dev Mode
+        </label>
+    </div>
 
   <script src="popup.js"></script>
 </body>
