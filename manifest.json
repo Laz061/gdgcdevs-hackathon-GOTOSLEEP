@@ -12,7 +12,8 @@
   "content_scripts": [
     {
       "js": [
-        "pet/content-script.js"
+        "pet/content-script.js",
+        "annoy/5min/bouncing-timer.js"
       ],
       "css": [
         "pet/pet.css"

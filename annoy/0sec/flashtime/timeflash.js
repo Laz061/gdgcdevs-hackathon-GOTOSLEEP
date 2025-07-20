@@ -30,21 +30,57 @@
   setTimeout(() => {
     overlay.innerHTML = ''; // Remove GIF
 
+
     const canvas = document.createElement('canvas');
     canvas.width = 1280;
     canvas.height = 720;
     const ctx = canvas.getContext('2d');
-    ctx.fillStyle = '#fff';
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-    ctx.font = 'bold 72px Arial';
-    ctx.fillStyle = '#222';
+
+    // Draw rounded rectangle background
+    function roundRect(ctx, x, y, w, h, r) {
+      ctx.beginPath();
+      ctx.moveTo(x + r, y);
+      ctx.lineTo(x + w - r, y);
+      ctx.quadraticCurveTo(x + w, y, x + w, y + r);
+      ctx.lineTo(x + w, y + h - r);
+      ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+      ctx.lineTo(x + r, y + h);
+      ctx.quadraticCurveTo(x, y + h, x, y + h - r);
+      ctx.lineTo(x, y + r);
+      ctx.quadraticCurveTo(x, y, x + r, y);
+      ctx.closePath();
+    }
+
+    // Theme colors
+    const bgColor = '#f8faff';
+    const borderColor = '#5468ff';
+    const shadowColor = 'rgba(60, 79, 224, 0.12)';
+    const textColor = '#3c4fe0';
+    const fontFamily = 'bold 96px "JetBrains Mono", monospace';
+
+    // Draw shadow
+    ctx.save();
+    ctx.shadowColor = shadowColor;
+    ctx.shadowBlur = 32;
+    roundRect(ctx, 240, 160, 800, 400, 48);
+    ctx.fillStyle = bgColor;
+    ctx.fill();
+    ctx.restore();
+
+    // Draw border
+    roundRect(ctx, 240, 160, 800, 400, 48);
+    ctx.lineWidth = 8;
+    ctx.strokeStyle = borderColor;
+    ctx.stroke();
+
+    // Draw time text
+    ctx.font = fontFamily;
+    ctx.fillStyle = textColor;
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
     const now = new Date();
     const timeStr = now.toLocaleTimeString();
     ctx.fillText(timeStr, canvas.width / 2, canvas.height / 2);
-
-
 
     overlay.appendChild(canvas);
     document.body.appendChild(overlay);

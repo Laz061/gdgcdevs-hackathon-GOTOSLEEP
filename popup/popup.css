@@ -1,60 +1,187 @@
+
+/* Countdown segmented style */
+.countdown-container {
+  display: flex;
+  justify-content: center;
+  perspective: 1000px;
+  margin-top: 1rem;
+}
+
+.countdown-segment {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 0 1rem;
+  position: relative;
+}
+
+.countdown-value {
+  font-size: 2.2rem;
+  font-weight: bold;
+  color: #3c4fe0;
+  background: #f8faff;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(60, 79, 224, 0.08);
+  padding: 8px 16px;
+  min-width: 48px;
+  text-align: center;
+  margin-bottom: 4px;
+}
+
+.countdown-label {
+  font-size: 0.85rem;
+  color: #5468ff;
+  font-weight: 500;
+  letter-spacing: 0.5px;
+}
 /* Basic reset */
 body, h1, label, input, button, div, p { margin: 0; padding: 0; }
 
 body {
-  font-family: Arial, sans-serif;
-  width: 240px;
-  padding: 16px;
+  font-family: "JetBrains Mono",monospace;
+  width: 320px;
+  min-height: 380px;
+  background: linear-gradient(135deg, #f8faff 0%, #e3e8ff 100%);
+  padding: 0;
   box-sizing: border-box;
+  box-shadow: 0 8px 32px rgba(60, 79, 224, 0.12), 0 1.5px 6px rgba(45, 35, 66, 0.08);
 }
 
 .container {
   text-align: center;
+  padding: 32px 24px 32px 24px;
+  background: rgba(255,255,255,0.92);
+  box-shadow: 0 2px 8px rgba(60, 79, 224, 0.06);
+  margin: 0 auto;
+  max-width: 280px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  min-height: 320px;
 }
 
 h1 {
-  font-size: 1.2rem;
-  margin-bottom: 12px;
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin-bottom: 18px;
+  color: #3c4fe0;
+  letter-spacing: 1px;
 }
 
 label {
-  font-size: 0.9rem;
+  font-size: 1rem;
+  color: #5468ff;
+  font-weight: 500;
+  margin-bottom: 6px;
+  display: block;
 }
 
 input[type="time"] {
   margin: 8px 0;
-  padding: 4px;
-  font-size: 1rem;
+  padding: 8px;
+  font-size: 1.1rem;
+  font-weight: bold;
   width: 100%;
   box-sizing: border-box;
+  border: 2px solid #5468ff;
+  border-radius: 6px;
+  outline: none;
+  background: #f8faff;
+  color: #222;
+  font-family: "JetBrains Mono",monospace;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+input[type="time"]:focus {
+  border-color: #5adaff;
+  box-shadow: 0 0 0 2px #5adaff33;
+}
+
+input[type="time"]:hover {
+  border-color: #3c4fe0;
 }
 
 button {
-  padding: 6px 12px;
-  font-size: 0.9rem;
+  align-items: center;
+  appearance: none;
+  background-image: radial-gradient(100% 100% at 100% 0, #5adaff 0, #5468ff 100%);
+  border: 0;
+  border-radius: 6px;
+  box-shadow: rgba(45, 35, 66, .4) 0 2px 4px,rgba(45, 35, 66, .3) 0 7px 13px -3px,rgba(58, 65, 111, .5) 0 -3px 0 inset;
+  box-sizing: border-box;
+  color: #fff;
   cursor: pointer;
-  margin-bottom: 12px;
+  display: inline-flex;
+  font-family: "JetBrains Mono",monospace;
+  height: 48px;
+  justify-content: center;
+  line-height: 1;
+  list-style: none;
+  overflow: hidden;
+  padding-left: 16px;
+  padding-right: 16px;
+  position: relative;
+  text-align: left;
+  text-decoration: none;
+  transition: box-shadow .15s,transform .15s;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+  white-space: nowrap;
+  will-change: box-shadow,transform;
+  font-size: 18px;
 }
 
 #resetBtn {
-  background: #f5f5f5;
-  color: #333;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  margin-top: 8px;
-  margin-bottom: 0;
-  font-size: 0.9rem;
-  padding: 6px 12px;
+  align-items: center;
+  appearance: none;
+  background-image: radial-gradient(100% 100% at 100% 0, #5adaff 0, #5468ff 100%);
+  border: 0;
+  border-radius: 6px;
+  box-shadow: rgba(45, 35, 66, .4) 0 2px 4px,rgba(45, 35, 66, .3) 0 7px 13px -3px,rgba(58, 65, 111, .5) 0 -3px 0 inset;
+  box-sizing: border-box;
+  color: #fff;
   cursor: pointer;
-  transition: background 0.2s;
+  display: inline-flex;
+  font-family: "JetBrains Mono",monospace;
+  height: 48px;
+  justify-content: center;
+  line-height: 1;
+  list-style: none;
+  overflow: hidden;
+  padding-left: 16px;
+  padding-right: 16px;
+  position: relative;
+  text-align: left;
+  text-decoration: none;
+  transition: box-shadow .15s,transform .15s;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+  white-space: nowrap;
+  will-change: box-shadow,transform;
+  font-size: 18px;
 }
-#resetBtn:hover {
-  background: #e6e6e6;
+
+button.button-29:focus {
+  box-shadow: #3c4fe0 0 0 0 1.5px inset, rgba(45, 35, 66, .4) 0 2px 4px, rgba(45, 35, 66, .3) 0 7px 13px -3px, #3c4fe0 0 -3px 0 inset;
+}
+
+button.button-29:hover {
+  box-shadow: rgba(45, 35, 66, .4) 0 4px 8px, rgba(45, 35, 66, .3) 0 7px 13px -3px, #3c4fe0 0 -3px 0 inset;
+  transform: translateY(-2px);
+}
+
+button.button-29:active {
+  box-shadow: #3c4fe0 0 3px 7px inset;
+  transform: translateY(2px);
 }
 
 #countdown {
-  font-size: 1.4rem;
-  margin: 8px 0;
+  margin: 18px 0 8px 0;
+  font-family: inherit;
+  font-weight: 600;
+  letter-spacing: 1px;
 }
 
 .progress-bar {
@@ -63,7 +190,7 @@ button {
   background: #eee;
   border-radius: 4px;
   overflow: hidden;
-  margin-top: 8px;
+  margin: 8px 0 16px 0;
 }
 
 #progress {
@@ -75,7 +202,7 @@ button {
 
 #message {
   font-size: 1.1rem;
-  margin-top: 12px;
+  margin: 18px 0 0 0;
   color: #d9534f;
 }
 
