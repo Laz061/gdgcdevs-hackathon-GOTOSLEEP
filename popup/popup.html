@@ -12,11 +12,24 @@
     <h1>Sleep Timer</h1>
     <label for="sleepTime">Go to sleep at:</label>
     <input type="time" id="sleepTime" />
-    <button id="startBtn">Start Countdown</button>
-    <button id="resetBtn" class="hidden">Reset</button>
+    <button id="startBtn" class="button-29">Start Countdown</button>
+    <button id="resetBtn" class="button-29 hidden">Reset</button>
 
     <div id="countdown" class="hidden">
-      <span id="hours">00</span>:<span id="minutes">00</span>:<span id="seconds">00</span>
+      <div class="countdown-container">
+        <div class="countdown-segment">
+          <span id="hours" class="countdown-value">00</span>
+          <span class="countdown-label">HRS</span>
+        </div>
+        <div class="countdown-segment">
+          <span id="minutes" class="countdown-value">00</span>
+          <span class="countdown-label">MIN</span>
+        </div>
+        <div class="countdown-segment">
+          <span id="seconds" class="countdown-value">00</span>
+          <span class="countdown-label">SEC</span>
+        </div>
+      </div>
     </div>
 
     <div class="progress-bar hidden">
